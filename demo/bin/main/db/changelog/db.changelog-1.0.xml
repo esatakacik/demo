@@ -1,0 +1,123 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet id="1" author="sha">
+        <sql>
+            CREATE TABLE airport (
+            id BIGINT NOT NULL AUTO_INCREMENT,
+            name VARCHAR(255) NOT NULL,
+            address VARCHAR(255) NOT NULL,
+            
+            CONSTRAINT PK_id PRIMARY KEY (id)
+            );
+        </sql>
+        <rollback>
+            DROP TABLE airport;
+        </rollback>
+    </changeSet>
+    <changeSet id="2" author="sha">
+        <sql>
+            CREATE TABLE company (
+            id BIGINT NOT NULL AUTO_INCREMENT,
+            name VARCHAR(255) NOT NULL,
+            CONSTRAINT PK_id PRIMARY KEY (id)
+            );
+        </sql>
+        <rollback>
+            DROP TABLE company;
+        </rollback>
+    </changeSet>
+    <changeSet id="3" author="sha">
+        <sql>
+            CREATE TABLE route(
+            id BIGINT NOT NULL AUTO_INCREMENT,
+            flight_time INT(16) NOT NULL,
+            boarding_airport_id BIGINT NOT NULL,
+            destination_airport_id BIGINT NOT NULL,
+            CONSTRAINT PK_id PRIMARY KEY (id),
+            CONSTRAINT fk_tran_boarding FOREIGN KEY (boarding_airport_id) REFERENCES airport(id) ON DELETE CASCADE ON UPDATE
+            CASCADE,
+            CONSTRAINT fk_tran_destination FOREIGN KEY (destination_airport_id) REFERENCES airport(id) ON DELETE CASCADE ON UPDATE
+            CASCADE
+            );
+        </sql>
+        <rollback>
+            DROP TABLE route;
+        </rollback>
+    </changeSet>
+    <changeSet id="4" author="sha">
+        <sql>
+            CREATE TABLE flight(
+            id BIGINT NOT NULL AUTO_INCREMENT,
+            date DATETIME NOT NULL,
+            route_id BIGINT NOT NULL,
+            company_id BIGINT NOT NULL,
+            quota INT(16) NOT NULL,
+            initial_price DOUBLE,
+            CONSTRAINT PK_id PRIMARY KEY (id),
+            CONSTRAINT fk_tran_route FOREIGN KEY (route_id) REFERENCES route(id) ON DELETE CASCADE ON UPDATE
+            CASCADE,
+            CONSTRAINT fk_tran_company FOREIGN KEY (company_id) REFERENCES company(id) ON DELETE CASCADE ON UPDATE
+            CASCADE
+            );
+        </sql>
+        <rollback>
+            DROP TABLE flight;
+        </rollback>
+    </changeSet>
+    <changeSet id="5" author="sha">
+        <sql>
+            CREATE TABLE ticket(
+            id BIGINT NOT NULL AUTO_INCREMENT,
+            passanger_name VARCHAR(255) NOT NULL,
+            price DOUBLE,
+            flight_id BIGINT NOT NULL,
+            CONSTRAINT PK_id PRIMARY KEY (id),
+            CONSTRAINT fk_tran_flight FOREIGN KEY (flight_id) REFERENCES flight(id) ON DELETE CASCADE ON UPDATE
+            CASCADE
+            );
+        </sql>
+        <rollback>
+            DROP TABLE flight;
+        </rollback>
+    </changeSet>
+    <changeSet id="6" author="sha">
+        <sql>
+            INSERT INTO airport VALUES (1,'Sabiha Gökçen','İstanbul'),(2,'Esenboğa','Ankara'),(3,'Adnan Menderes','İzmir'),(4,'Dalaman','Muğla');
+        </sql>
+        <rollback>
+            TRUNCATE TABLE airport;
+        </rollback>
+    </changeSet>
+    <changeSet id="7" author="sha">
+        <sql>
+           INSERT INTO company VALUES (1,'THY'),(2,'Pegasus'),(3,'Anadolujet');
+        </sql>
+        <rollback>
+            TRUNCATE TABLE company;
+        </rollback>
+    </changeSet>
+    <changeSet id="8" author="sha">
+        <sql>
+           INSERT INTO route VALUES (1,60,1,2),(2,60,1,3),(3,100,1,4),(4,60,2,1),(5,60,2,3),(6,80,2,4),(7,60,3,1),(8,60,3,2),(9,70,3,4),(10,100,4,1),(11,80,4,2),(12,70,4,3);
+        </sql>
+        <rollback>
+            TRUNCATE TABLE route;
+        </rollback>
+    </changeSet>
+    <changeSet id="9" author="sha">
+        <sql>
+           INSERT INTO flight VALUES (1,'2020-05-20 07:24:00',1,1,20,20),(2,'2020-05-21 07:24:00',2,1,10,10),(3,'2020-05-21 07:24:00',2,2,10,10);
+        </sql>
+        <rollback>
+            TRUNCATE TABLE flight;
+        </rollback>	
+    </changeSet>
+    <changeSet id="10" author="sha">
+        <sql>
+           INSERT INTO ticket VALUES (7,'Esat Akacık',20,1),(8,'Esat Akacık',20,1),(9,'Esat Akacık',22,1);
+        </sql>
+        <rollback>
+            TRUNCATE TABLE ticket;
+        </rollback>	
+    </changeSet>
+</databaseChangeLog>
